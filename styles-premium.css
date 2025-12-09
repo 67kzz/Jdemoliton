@@ -1072,15 +1072,16 @@ body {
 .faq-answer {
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.3s ease;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+    padding: 0 24px;
 }
 
 .faq-item.active .faq-answer {
-    max-height: 300px;
+    max-height: 500px;
+    padding: 0 24px 24px;
 }
 
 .faq-answer p {
-    padding: 0 24px 24px;
     color: var(--gray);
     line-height: 1.8;
 }
@@ -1914,6 +1915,10 @@ body {
     }
 
     .faq-answer {
+        padding: 0 16px;
+    }
+
+    .faq-item.active .faq-answer {
         padding: 0 16px 16px;
     }
 
