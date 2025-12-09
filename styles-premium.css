@@ -2059,6 +2059,9 @@ body {
         border-radius: 12px;
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
         order: 2;
+        max-width: 400px;
+        margin: 0 auto;
+        width: 100%;
     }
 
     .contact-form::before {
