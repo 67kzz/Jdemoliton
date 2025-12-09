@@ -310,9 +310,37 @@ function initProjectSliders() {
             goToSlide(prevIndex);
         }
 
-        // Event listeners
+        // Event listeners for buttons
         if (nextBtn) nextBtn.addEventListener('click', nextSlide);
         if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+
+        // Touch swipe support for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+        const minSwipeDistance = 50;
+
+        slider.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        slider.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, { passive: true });
+
+        function handleSwipe() {
+            const swipeDistance = touchEndX - touchStartX;
+
+            if (Math.abs(swipeDistance) > minSwipeDistance) {
+                if (swipeDistance > 0) {
+                    // Swiped right - go to previous
+                    prevSlide();
+                } else {
+                    // Swiped left - go to next
+                    nextSlide();
+                }
+            }
+        }
 
         // Auto-play (optional)
         // setInterval(nextSlide, 5000);
