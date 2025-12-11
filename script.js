@@ -227,7 +227,10 @@ function initProjectSliders() {
         images.forEach((_, index) => {
             const dot = document.createElement('div');
             dot.className = 'slider-dot' + (index === 0 ? ' active' : '');
-            dot.addEventListener('click', () => goToSlide(index));
+            dot.addEventListener('click', (e) => {
+                e.stopPropagation();
+                goToSlide(index);
+            });
             dotsContainer.appendChild(dot);
         });
 
@@ -254,9 +257,28 @@ function initProjectSliders() {
             goToSlide(prevIndex);
         }
 
-        // Event listeners for buttons
-        if (nextBtn) nextBtn.addEventListener('click', nextSlide);
-        if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+        // Event listeners for buttons - stop propagation to prevent lightbox opening
+        if (nextBtn) {
+            nextBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                nextSlide();
+            });
+        }
+        if (prevBtn) {
+            prevBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                prevSlide();
+            });
+        }
+
+        // Click on image to open lightbox
+        images.forEach((img, index) => {
+            img.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const imageSrcs = Array.from(images).map(i => i.src);
+                openLightbox(imageSrcs, index);
+            });
+        });
 
         // Touch swipe support for mobile
         let touchStartX = 0;
@@ -289,6 +311,100 @@ function initProjectSliders() {
         // Auto-play (optional)
         // setInterval(nextSlide, 5000);
     });
+}
+
+// ==========================================
+// LIGHTBOX GALLERY
+// ==========================================
+const lightbox = document.getElementById('lightbox');
+const lightboxImage = document.getElementById('lightboxImage');
+const lightboxCounter = document.getElementById('lightboxCounter');
+const lightboxClose = document.querySelector('.lightbox-close');
+const lightboxPrev = document.querySelector('.lightbox-prev');
+const lightboxNext = document.querySelector('.lightbox-next');
+
+let lightboxImages = [];
+let lightboxCurrentIndex = 0;
+
+function openLightbox(images, startIndex) {
+    lightboxImages = images;
+    lightboxCurrentIndex = startIndex;
+    updateLightboxImage();
+    lightbox.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+    lightbox.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+function updateLightboxImage() {
+    lightboxImage.src = lightboxImages[lightboxCurrentIndex];
+    lightboxCounter.textContent = `${lightboxCurrentIndex + 1} / ${lightboxImages.length}`;
+}
+
+function lightboxNextImage() {
+    lightboxCurrentIndex = (lightboxCurrentIndex + 1) % lightboxImages.length;
+    updateLightboxImage();
+}
+
+function lightboxPrevImage() {
+    lightboxCurrentIndex = (lightboxCurrentIndex - 1 + lightboxImages.length) % lightboxImages.length;
+    updateLightboxImage();
+}
+
+// Lightbox event listeners
+if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
+if (lightboxNext) lightboxNext.addEventListener('click', lightboxNextImage);
+if (lightboxPrev) lightboxPrev.addEventListener('click', lightboxPrevImage);
+
+// Close on background click
+if (lightbox) {
+    lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox) {
+            closeLightbox();
+        }
+    });
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+    if (!lightbox.classList.contains('active')) return;
+
+    switch (e.key) {
+        case 'Escape':
+            closeLightbox();
+            break;
+        case 'ArrowRight':
+            lightboxNextImage();
+            break;
+        case 'ArrowLeft':
+            lightboxPrevImage();
+            break;
+    }
+});
+
+// Touch swipe for lightbox
+let lightboxTouchStartX = 0;
+let lightboxTouchEndX = 0;
+
+if (lightbox) {
+    lightbox.addEventListener('touchstart', (e) => {
+        lightboxTouchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    lightbox.addEventListener('touchend', (e) => {
+        lightboxTouchEndX = e.changedTouches[0].screenX;
+        const diff = lightboxTouchStartX - lightboxTouchEndX;
+        if (Math.abs(diff) > 50) {
+            if (diff > 0) {
+                lightboxNextImage();
+            } else {
+                lightboxPrevImage();
+            }
+        }
+    }, { passive: true });
 }
 
 // Initialize sliders after DOM is loaded
