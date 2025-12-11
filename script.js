@@ -206,62 +206,6 @@ window.addEventListener('load', () => {
     }, 100);
 });
 
-// ==========================================
-// CHAT WIDGET
-// ==========================================
-const chatButton = document.getElementById('chatButton');
-const chatWindow = document.getElementById('chatWindow');
-const chatClose = document.getElementById('chatClose');
-const chatInput = document.getElementById('chatInput');
-const chatSend = document.getElementById('chatSend');
-const chatBody = chatWindow.querySelector('.chat-body');
-
-// Open chat
-chatButton.addEventListener('click', () => {
-    chatWindow.style.display = 'flex';
-    chatButton.style.display = 'none';
-    chatInput.focus();
-});
-
-// Close chat
-chatClose.addEventListener('click', () => {
-    chatWindow.style.display = 'none';
-    chatButton.style.display = 'flex';
-});
-
-// Send message
-function sendMessage() {
-    const message = chatInput.value.trim();
-    if (message) {
-        // Add user message
-        const userMessage = document.createElement('div');
-        userMessage.className = 'chat-message user-message';
-        userMessage.innerHTML = `<p>${message}</p>`;
-        chatBody.appendChild(userMessage);
-
-        // Clear input
-        chatInput.value = '';
-
-        // Scroll to bottom
-        chatBody.scrollTop = chatBody.scrollHeight;
-
-        // Simulate bot response
-        setTimeout(() => {
-            const botMessage = document.createElement('div');
-            botMessage.className = 'chat-message bot-message';
-            botMessage.innerHTML = `<p>Thank you for your message! We'll get back to you shortly. For immediate assistance, please call us at 07808 618149.</p>`;
-            chatBody.appendChild(botMessage);
-            chatBody.scrollTop = chatBody.scrollHeight;
-        }, 1000);
-    }
-}
-
-chatSend.addEventListener('click', sendMessage);
-chatInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        sendMessage();
-    }
-});
 
 // ==========================================
 // PROJECT IMAGE SLIDER
