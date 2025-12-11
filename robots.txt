@@ -1,0 +1,11 @@
+# Robots.txt for Everything Waste
+# https://everythingwaste.co.uk
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://everythingwaste.co.uk/sitemap.xml
+
+# Crawl-delay (optional, be kind to servers)
+Crawl-delay: 1
