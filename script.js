@@ -302,6 +302,76 @@ tabButtons.forEach(button => {
 });
 
 // ==========================================
+// TESTIMONIAL SLIDER
+// ==========================================
+function initTestimonialSlider() {
+    const track = document.querySelector('.testimonial-track');
+    const cards = document.querySelectorAll('.testimonial-card');
+    const prevBtn = document.querySelector('.testimonial-nav.prev');
+    const nextBtn = document.querySelector('.testimonial-nav.next');
+    const dotsContainer = document.querySelector('.testimonial-dots');
+
+    if (!track || cards.length === 0) return;
+
+    let currentIndex = 0;
+    const totalSlides = cards.length;
+
+    // Create dots
+    cards.forEach((_, index) => {
+        const dot = document.createElement('div');
+        dot.className = 'dot' + (index === 0 ? ' active' : '');
+        dot.addEventListener('click', () => goToSlide(index));
+        dotsContainer.appendChild(dot);
+    });
+
+    const dots = dotsContainer.querySelectorAll('.dot');
+
+    function goToSlide(index) {
+        currentIndex = index;
+        track.style.transform = `translateX(-${index * 100}%)`;
+
+        dots.forEach((dot, i) => {
+            dot.classList.toggle('active', i === index);
+        });
+    }
+
+    function nextSlide() {
+        const next = (currentIndex + 1) % totalSlides;
+        goToSlide(next);
+    }
+
+    function prevSlide() {
+        const prev = (currentIndex - 1 + totalSlides) % totalSlides;
+        goToSlide(prev);
+    }
+
+    if (nextBtn) nextBtn.addEventListener('click', nextSlide);
+    if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+
+    // Touch swipe support
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    track.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    track.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        const diff = touchStartX - touchEndX;
+        if (Math.abs(diff) > 50) {
+            if (diff > 0) nextSlide();
+            else prevSlide();
+        }
+    }, { passive: true });
+
+    // Auto-play
+    setInterval(nextSlide, 6000);
+}
+
+document.addEventListener('DOMContentLoaded', initTestimonialSlider);
+
+// ==========================================
 // CONSOLE MESSAGE
 // ==========================================
 console.log('%cEverything Waste', 'color: #22c55e; font-size: 24px; font-weight: bold;');
